@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edu Tech – Login / Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#07090f;--bg2:#0c0f1c;--card:#111827;--border:rgba(99,179,237,0.14);
+      --accent:#63b3ed;--accent2:#f6ad55;--accent3:#68d391;--accent4:#fc8181;
+      --text:#e2e8f0;--muted:#64748b;--glow:rgba(99,179,237,0.18);
+      --input-bg:#0d1117;--input-border:rgba(99,179,237,0.18);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
+      min-height:100vh;overflow-x:hidden;display:flex;align-items:stretch;
+    }
+
+    /* ── ANIMATED BG ── */
+    .bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;}
+    .bg-mesh{
+      position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 70% 70% at 0% 0%,   rgba(99,179,237,0.09) 0%,transparent 60%),
+        radial-gradient(ellipse 50% 50% at 100% 100%,rgba(104,211,145,0.07) 0%,transparent 55%),
+        radial-gradient(ellipse 60% 40% at 50% 110%, rgba(246,173,85,0.05)  0%,transparent 55%),
+        var(--bg);
+    }
+    .grid-bg{
+      position:absolute;inset:0;
+      background-image:linear-gradient(rgba(99,179,237,0.04) 1px,transparent 1px),
+                       linear-gradient(90deg,rgba(99,179,237,0.04) 1px,transparent 1px);
+      background-size:52px 52px;
+    }
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);animation:orbFloat var(--dur,12s) ease-in-out infinite alternate;}
+    @keyframes orbFloat{from{transform:translateY(0) scale(1);}to{transform:translateY(-40px) scale(1.08);}}
+    .orb1{width:500px;height:500px;top:-200px;left:-150px;background:rgba(99,179,237,0.06);--dur:14s;}
+    .orb2{width:400px;height:400px;bottom:-100px;right:-100px;background:rgba(104,211,145,0.05);--dur:10s;}
+
+    /* Particles */
+    canvas#particles{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.35;}
+
+    /* ── LAYOUT ── */
+    .page-wrap{position:relative;z-index:1;display:flex;width:100%;min-height:100vh;}
+
+    /* LEFT PANEL */
+    .left-panel{
+      flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+      padding:60px 64px;border-right:1px solid var(--border);
+      background:rgba(10,14,26,0.5);backdrop-filter:blur(6px);
+    }
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:56px;}
+    .brand-dot{width:10px;height:10px;border-radius:50%;background:var(--accent3);
+      box-shadow:0 0 0 0 rgba(104,211,145,0.4);animation:brandPulse 2s ease-in-out infinite;}
+    @keyframes brandPulse{0%,100%{box-shadow:0 0 0 0 rgba(104,211,145,0.4);}50%{box-shadow:0 0 0 10px rgba(104,211,145,0);}}
+    .brand-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.7rem;color:var(--accent);letter-spacing:-0.5px;}
+    .brand-name span{color:var(--accent2);}
+
+    .left-headline{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,3.5vw,3rem);line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px;}
+    .left-headline .hl{background:linear-gradient(135deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .left-sub{font-size:1rem;color:var(--muted);line-height:1.7;max-width:400px;margin-bottom:52px;}
+
+    .feature-list{display:flex;flex-direction:column;gap:18px;}
+    .feature{display:flex;align-items:flex-start;gap:14px;}
+    .feature-icon{
+      width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;flex-shrink:0;background:rgba(99,179,237,0.08);border:1px solid rgba(99,179,237,0.15);
+    }
+    .feature-text .ft{font-family:'Syne',sans-serif;font-weight:700;font-size:0.92rem;color:var(--text);}
+    .feature-text .fs{font-size:0.82rem;color:var(--muted);margin-top:2px;}
+
+    .left-bottom{margin-top:auto;padding-top:56px;}
+    .testimonial{
+      background:rgba(255,255,255,0.03);border:1px solid var(--border);
+      border-radius:12px;padding:20px 22px;max-width:420px;
+    }
+    .testimonial p{font-size:0.9rem;color:var(--text);line-height:1.6;font-style:italic;}
+    .test-author{display:flex;align-items:center;gap:10px;margin-top:14px;}
+    .test-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#0a0e1a;font-family:'Syne',sans-serif;}
+    .test-name{font-size:0.82rem;font-family:'Syne',sans-serif;font-weight:700;color:var(--text);}
+    .test-role{font-size:0.72rem;color:var(--muted);}
+
+    /* RIGHT PANEL – AUTH FORM */
+    .right-panel{
+      width:480px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;
+      align-items:center;padding:60px 48px;
+    }
+    .auth-box{width:100%;max-width:400px;}
+
+    .auth-toggle{
+      display:flex;background:rgba(255,255,255,0.04);border:1px solid var(--border);
+      border-radius:10px;padding:4px;margin-bottom:36px;
+    }
+    .toggle-btn{
+      flex:1;padding:10px;border-radius:7px;border:none;background:transparent;
+      color:var(--muted);font-family:'Syne',sans-serif;font-weight:700;font-size:0.88rem;
+      cursor:pointer;transition:0.25s;
+    }
+    .toggle-btn.active{background:var(--accent);color:#0a0e1a;}
+
+    .auth-title{font-family:'Syne',sans-serif;font-weight:800;font-size:1.7rem;letter-spacing:-0.5px;margin-bottom:6px;}
+    .auth-sub{font-size:0.88rem;color:var(--muted);margin-bottom:32px;}
+
+    /* Social buttons */
+    .social-row{display:flex;gap:10px;margin-bottom:24px;}
+    .social-btn{
+      flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+      padding:11px;border-radius:8px;border:1px solid var(--border);
+      background:rgba(255,255,255,0.03);color:var(--text);
+      font-size:0.83rem;font-family:'DM Sans',sans-serif;font-weight:500;
+      cursor:pointer;transition:0.2s;
+    }
+    .social-btn:hover{border-color:var(--accent);background:rgba(99,179,237,0.06);}
+    .social-icon{width:18px;height:18px;}
+
+    .divider{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+    .divider-line{flex:1;height:1px;background:var(--border);}
+    .divider span{font-size:0.75rem;color:var(--muted);font-family:'Space Mono',monospace;}
+
+    /* Form */
+    .form-group{margin-bottom:18px;position:relative;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    label{display:block;font-size:0.78rem;font-family:'Syne',sans-serif;font-weight:700;
+      color:var(--muted);margin-bottom:7px;letter-spacing:0.5px;text-transform:uppercase;}
+    .input-wrap{position:relative;}
+    input[type=text],input[type=email],input[type=password]{
+      width:100%;padding:13px 16px;padding-right:44px;
+      background:var(--input-bg);border:1px solid var(--input-border);
+      border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.92rem;
+      outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+      -webkit-appearance:none;
+    }
+    input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,179,237,0.12);}
+    input.error{border-color:var(--accent4);}
+    input::placeholder{color:var(--muted);}
+    .input-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;pointer-events:none;}
+    .eye-btn{position:absolute;right:13px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:2px;transition:color 0.2s;}
+    .eye-btn:hover{color:var(--accent);}
+
+    .field-error{font-size:0.73rem;color:var(--accent4);margin-top:5px;display:none;}
+    .field-error.show{display:block;}
+
+    /* Password strength */
+    .strength-bar{display:flex;gap:4px;margin-top:8px;}
+    .strength-seg{flex:1;height:3px;border-radius:99px;background:rgba(255,255,255,0.07);transition:background 0.3s;}
+    .strength-label{font-size:0.7rem;color:var(--muted);margin-top:5px;font-family:'Space Mono',monospace;}
+
+    .forgot-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .check-wrap{display:flex;align-items:center;gap:8px;}
+    .check-wrap input[type=checkbox]{
+      width:16px;height:16px;accent-color:var(--accent);cursor:pointer;
+    }
+    .check-wrap label{font-size:0.8rem;color:var(--muted);text-transform:none;letter-spacing:0;margin-bottom:0;cursor:pointer;}
+    .forgot-link{font-size:0.8rem;color:var(--accent);text-decoration:none;transition:opacity 0.2s;}
+    .forgot-link:hover{opacity:0.7;}
+
+    /* Terms */
+    .terms-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:20px;}
+    .terms-row input[type=checkbox]{width:16px;height:16px;margin-top:2px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
+    .terms-row label{font-size:0.78rem;color:var(--muted);text-transform:none;letter-spacing:0;margin-bottom:0;line-height:1.5;}
+    .terms-row a{color:var(--accent);text-decoration:none;}
+
+    .submit-btn{
+      width:100%;padding:15px;border-radius:8px;border:none;
+      background:linear-gradient(135deg,var(--accent) 0%,#4299e1 100%);
+      color:#0a0e1a;font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;
+      cursor:pointer;transition:0.25s;letter-spacing:0.3px;
+      box-shadow:0 4px 24px rgba(99,179,237,0.25);position:relative;overflow:hidden;
+    }
+    .submit-btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,0);transition:0.2s;}
+    .submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(99,179,237,0.4);}
+    .submit-btn:hover::after{background:rgba(255,255,255,0.07);}
+    .submit-btn:active{transform:translateY(0);}
+    .submit-btn.loading{pointer-events:none;opacity:0.8;}
+    .btn-spinner{display:none;width:18px;height:18px;border:2px solid rgba(10,14,26,0.3);border-top-color:#0a0e1a;border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto;}
+    .btn-text{}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    .switch-link{text-align:center;margin-top:22px;font-size:0.85rem;color:var(--muted);}
+    .switch-link a{color:var(--accent);text-decoration:none;font-weight:600;}
+
+    /* Toast */
+    .toast{
+      position:fixed;top:28px;right:28px;z-index:9999;
+      background:var(--card);border:1px solid var(--border);border-radius:10px;
+      padding:14px 20px;display:flex;align-items:center;gap:12px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);
+      transform:translateX(120%);transition:transform 0.35s cubic-bezier(.34,1.56,.64,1);
+      max-width:340px;
+    }
+    .toast.show{transform:translateX(0);}
+    .toast-icon{font-size:1.2rem;}
+    .toast-msg{font-size:0.88rem;line-height:1.4;}
+
+    /* Responsive */
+    @media(max-width:900px){
+      .left-panel{display:none;}
+      .right-panel{width:100%;padding:40px 28px;}
+    }
+    @media(max-width:480px){
+      .form-row{grid-template-columns:1fr;}
+      .right-panel{padding:30px 20px;}
+    }
+  </style>
+</head>
+<body>
+<div class="bg-wrap">
+  <div class="bg-mesh"></div>
+  <div class="grid-bg"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+</div>
+<canvas id="particles"></canvas>
+
+<div class="page-wrap">
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      <div class="brand-name">Code<span>Verse</span></div>
+    </div>
+
+    <h1 class="left-headline">Learn to Code.<br>Build the <span class="hl">Future.</span></h1>
+    <p class="left-sub">Join thousands of developers mastering Python, JavaScript, Rust, Go, and more through structured guides, real examples, and hands-on learning paths.</p>
+
+    <div class="feature-list">
+      <div class="feature">
+        <div class="feature-icon">🚀</div>
+        <div class="feature-text">
+          <div class="ft">12+ Languages Covered</div>
+          <div class="fs">From beginner-friendly Python to systems-level Rust</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">💡</div>
+        <div class="feature-text">
+          <div class="ft">Live Code Examples</div>
+          <div class="fs">Syntax-highlighted, copy-paste ready snippets</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-text">
+          <div class="ft">Structured Learning Paths</div>
+          <div class="fs">Beginner to advanced tutorials for every language</div>
+        </div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔓</div>
+        <div class="feature-text">
+          <div class="ft">Completely Free &amp; Open Source</div>
+          <div class="fs">MIT licensed. Use it, fork it, share it.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <div class="testimonial">
+        <p>"CodeVerse helped me land my first dev job. The language comparisons and code examples saved me hours of research."</p>
+        <div class="test-author">
+          <div class="test-avatar">AK</div>
+          <div>
+            <div class="test-name">Arjun Kumar</div>
+            <div class="test-role">Junior Developer · Pune, India</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+    <div class="auth-box">
+      <!-- Toggle -->
+      <div class="auth-toggle">
+        <button class="toggle-btn active" id="loginTab" onclick="switchTab('login')">Sign In</button>
+        <button class="toggle-btn" id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="auth-title">Welcome back 👋</div>
+        <div class="auth-sub">Sign in to continue your learning journey</div>
+
+        <div class="social-row">
+          <button class="social-btn" onclick="socialLogin('Google')">
+            <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="social-btn" onclick="socialLogin('GitHub')">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            GitHub
+          </button>
+        </div>
+
+        <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <input type="email" id="loginEmail" placeholder="you@example.com" oninput="clearErr(this)"/>
+            <span class="input-icon">✉</span>
+          </div>
+          <div class="field-error" id="loginEmailErr">Please enter a valid email.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="loginPass" placeholder="Enter your password" oninput="clearErr(this)"/>
+            <button class="eye-btn" type="button" onclick="toggleEye('loginPass',this)">👁</button>
+          </div>
+          <div class="field-error" id="loginPassErr">Password is required.</div>
+        </div>
+
+        <div class="forgot-row">
+          <div class="check-wrap">
+            <input type="checkbox" id="rememberMe">
+            <label for="rememberMe">Remember me</label>
+          </div>
+          <a href="#" class="forgot-link" onclick="showForgot()">Forgot password?</a>
+        </div>
+
+        <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+          <span class="btn-text">Sign In →</span>
+          <div class="btn-spinner" id="loginSpinner"></div>
+        </button>
+
+        <div class="switch-link">Don't have an account? <a href="#" onclick="switchTab('signup')">Create one free</a></div>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" style="display:none">
+        <div class="auth-title">Create account 🎉</div>
+        <div class="auth-sub">Start your programming journey today — free forever</div>
+
+        <div class="social-row">
+          <button class="social-btn" onclick="socialLogin('Google')">
+            <svg class="social-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google
+          </button>
+          <button class="social-btn" onclick="socialLogin('GitHub')">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            GitHub
+          </button>
+        </div>
+
+        <div class="divider"><div class="divider-line"></div><span>or</span><div class="divider-line"></div></div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <div class="input-wrap">
+              <input type="text" id="signupFirst" placeholder="Arjun" oninput="clearErr(this)"/>
+            </div>
+            <div class="field-error" id="signupFirstErr">Required.</div>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <div class="input-wrap">
+              <input type="text" id="signupLast" placeholder="Kumar" oninput="clearErr(this)"/>
+            </div>
+            <div class="field-error" id="signupLastErr">Required.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="input-wrap">
+            <input type="email" id="signupEmail" placeholder="you@example.com" oninput="clearErr(this)"/>
+            <span class="input-icon">✉</span>
+          </div>
+          <div class="field-error" id="signupEmailErr">Enter a valid email.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="signupPass" placeholder="Create a strong password" oninput="checkStrength(this.value);clearErr(this)"/>
+            <button class="eye-btn" type="button" onclick="toggleEye('signupPass',this)">👁</button>
+          </div>
+          <div class="strength-bar" id="strengthBar">
+            <div class="strength-seg" id="s1"></div>
+            <div class="strength-seg" id="s2"></div>
+            <div class="strength-seg" id="s3"></div>
+            <div class="strength-seg" id="s4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+          <div class="field-error" id="signupPassErr">Min 8 chars, 1 number, 1 uppercase.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <input type="password" id="signupConfirm" placeholder="Repeat your password" oninput="clearErr(this)"/>
+            <button class="eye-btn" type="button" onclick="toggleEye('signupConfirm',this)">👁</button>
+          </div>
+          <div class="field-error" id="signupConfirmErr">Passwords do not match.</div>
+        </div>
+
+        <div class="terms-row">
+          <input type="checkbox" id="agreeTerms">
+          <label for="agreeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+        </div>
+        <div class="field-error" id="termsErr" style="margin-top:-10px;margin-bottom:14px;">You must agree to the terms.</div>
+
+        <button class="submit-btn" id="signupBtn" onclick="doSignup()">
+          <span class="btn-text">Create Free Account →</span>
+          <div class="btn-spinner" id="signupSpinner"></div>
+        </button>
+
+        <div class="switch-link">Already have an account? <a href="#" onclick="switchTab('login')">Sign in</a></div>
+      </div>
+
+    </div><!-- /.auth-box -->
+  </div><!-- /.right-panel -->
+</div><!-- /.page-wrap -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">✅</span>
+  <span class="toast-msg" id="toastMsg"></span>
+</div>
+
+<script>
+/* ── PARTICLES ── */
+const canvas=document.getElementById('particles'),ctx=canvas.getContext('2d');
+let pts=[];
+function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight;}
+function initPts(){pts=[];for(let i=0;i<55;i++)pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5});}
+function drawPts(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0||p.x>canvas.width)p.vx*=-1;
+    if(p.y<0||p.y>canvas.height)p.vy*=-1;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle='rgba(99,179,237,0.4)';ctx.fill();
+  });
+  pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+    const d=Math.hypot(a.x-b.x,a.y-b.y);
+    if(d<110){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+      ctx.strokeStyle=`rgba(99,179,237,${0.12*(1-d/110)})`;ctx.lineWidth=.7;ctx.stroke();}
+  }));
+  requestAnimationFrame(drawPts);
+}
+resizeCanvas();initPts();drawPts();
+window.addEventListener('resize',()=>{resizeCanvas();initPts();});
+
+/* ── TAB SWITCH ── */
+function switchTab(t){
+  const isLogin=t==='login';
+  document.getElementById('loginForm').style.display  = isLogin?'block':'none';
+  document.getElementById('signupForm').style.display = isLogin?'none':'block';
+  document.getElementById('loginTab').classList.toggle('active', isLogin);
+  document.getElementById('signupTab').classList.toggle('active',!isLogin);
+}
+
+/* ── TOGGLE PASSWORD ── */
+function toggleEye(id,btn){
+  const el=document.getElementById(id);
+  const show=el.type==='password';
+  el.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁';
+}
+
+/* ── PASSWORD STRENGTH ── */
+function checkStrength(v){
+  let score=0;
+  if(v.length>=8)score++;
+  if(/[A-Z]/.test(v))score++;
+  if(/[0-9]/.test(v))score++;
+  if(/[^A-Za-z0-9]/.test(v))score++;
+  const colors=['#fc8181','#f6ad55','#ecc94b','#68d391'];
+  const labels=['Weak','Fair','Good','Strong'];
+  const segs=[s1,s2,s3,s4];
+  segs.forEach((s,i)=>{s.style.background=i<score?colors[score-1]:'rgba(255,255,255,0.07)';});
+  document.getElementById('strengthLabel').textContent=v?labels[score-1]||'':'';
+  document.getElementById('strengthLabel').style.color=v?colors[score-1]||'':'' ;
+}
+
+/* ── CLEAR ERRORS ── */
+function clearErr(el){el.classList.remove('error');}
+function showErr(id,msg){
+  const el=document.getElementById(id);
+  el.classList.add('show');
+  if(msg)el.textContent=msg;
+  const inp=el.previousElementSibling?.querySelector('input')||el.parentElement.querySelector('input');
+  if(inp)inp.classList.add('error');
+}
+function hideAllErrors(){document.querySelectorAll('.field-error').forEach(e=>e.classList.remove('show'));document.querySelectorAll('input').forEach(e=>e.classList.remove('error'));}
+
+/* ── TOAST ── */
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIcon').textContent=type==='success'?'✅':type==='error'?'❌':'ℹ️';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+/* ── LOADING ── */
+function setLoading(btnId,spinnerId,state){
+  const btn=document.getElementById(btnId),sp=document.getElementById(spinnerId);
+  if(state){btn.classList.add('loading');btn.querySelector('.btn-text').style.display='none';sp.style.display='block';}
+  else{btn.classList.remove('loading');btn.querySelector('.btn-text').style.display='';sp.style.display='none';}
+}
+
+/* ── LOGIN ── */
+function doLogin(){
+  hideAllErrors();
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass =document.getElementById('loginPass').value;
+  let ok=true;
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('loginEmailErr');ok=false;}
+  if(!pass){showErr('loginPassErr');ok=false;}
+  if(!ok)return;
+
+  // Check localStorage for registered user
+  const users=JSON.parse(localStorage.getItem('cv_users')||'[]');
+  const user=users.find(u=>u.email===email&&u.password===btoa(pass));
+  if(!user&&email!=='demo@codeverse.dev'){
+    showErr('loginEmailErr','No account found with these credentials.');
+    showErr('loginPassErr','');
+    return;
+  }
+  setLoading('loginBtn','loginSpinner',true);
+  setTimeout(()=>{
+    setLoading('loginBtn','loginSpinner',false);
+    const name=user?user.first:'Demo';
+    localStorage.setItem('cv_session',JSON.stringify({name,email,ts:Date.now()}));
+    showToast(`Welcome back, ${name}! Redirecting…`);
+    setTimeout(()=>window.location.href='index.html',1600);
+  },1400);
+}
+
+/* ── SIGNUP ── */
+function doSignup(){
+  hideAllErrors();
+  const first  =document.getElementById('signupFirst').value.trim();
+  const last   =document.getElementById('signupLast').value.trim();
+  const email  =document.getElementById('signupEmail').value.trim();
+  const pass   =document.getElementById('signupPass').value;
+  const confirm=document.getElementById('signupConfirm').value;
+  const terms  =document.getElementById('agreeTerms').checked;
+  let ok=true;
+
+  if(!first){showErr('signupFirstErr');ok=false;}
+  if(!last) {showErr('signupLastErr');ok=false;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showErr('signupEmailErr');ok=false;}
+  if(!/(?=.*[A-Z])(?=.*\d).{8,}/.test(pass)){showErr('signupPassErr');ok=false;}
+  if(pass!==confirm){showErr('signupConfirmErr');ok=false;}
+  if(!terms){showErr('termsErr');ok=false;}
+  if(!ok)return;
+
+  const users=JSON.parse(localStorage.getItem('cv_users')||'[]');
+  if(users.find(u=>u.email===email)){showErr('signupEmailErr','This email is already registered.');return;}
+
+  setLoading('signupBtn','signupSpinner',true);
+  setTimeout(()=>{
+    users.push({first,last,email,password:btoa(pass),joined:Date.now()});
+    localStorage.setItem('cv_users',JSON.stringify(users));
+    localStorage.setItem('cv_session',JSON.stringify({name:first,email,ts:Date.now()}));
+    setLoading('signupBtn','signupSpinner',false);
+    showToast(`Account created! Welcome, ${first}! 🎉`);
+    setTimeout(()=>window.location.href='index.html',1800);
+  },1500);
+}
+
+/* ── SOCIAL ── */
+function socialLogin(provider){
+  showToast(`${provider} login is a demo only 😊`,'info');
+}
+
+/* ── FORGOT ── */
+function showForgot(){
+  showToast('Password reset link sent! (demo only) 📧','info');
+}
+</script>
+</body>
+</html>
